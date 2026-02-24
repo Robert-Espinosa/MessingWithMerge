@@ -1,71 +1,78 @@
 const list = document.getElementById("preview");
-let isDarkmode = false;
-let isHighlightOn = false;
-let detailsShown = true;
 
-document.getElementById("decrease").addEventListener("click", decrease);
-document.getElementById("increase").addEventListener("click", increase);
-document.getElementById("highlight").addEventListener("click", highlight);
-document.getElementById("darkModeBtn").addEventListener("click", darkMode);
-document.getElementById("toggle").addEventListener("click", toggle);
+const elements = {
+  darkStats: document.getElementById("darkStats"),
+  fontStats: document.getElementById("fontStats"),
+  highlightStats: document.getElementById("highlightStats"),
+  detailStats: document.getElementById("detailStats")
+};
+
+const state = {
+  darkMode: false,
+  highlight: false,
+  detailsVisible: true,
+  fontSize: 16
+};
+
+// Event listeners
+document.getElementById("decrease").addEventListener("click", () => changeFont(-2));
+document.getElementById("increase").addEventListener("click", () => changeFont(2));
+document.getElementById("highlight").addEventListener("click", toggleHighlight);
+document.getElementById("darkModeBtn").addEventListener("click", toggleDarkMode);
+document.getElementById("toggle").addEventListener("click", toggleDetails);
 document.getElementById("reset").addEventListener("click", reset);
 
-const darkStats = document.getElementById("darkStats");
-const fontStats = document.getElementById("fontStats");
-const highlightStats = document.getElementById("highlightStats");
-const deatailStats = document.getElementById("deatailStats");
-
+// ---------- Core Logic ----------
 
 function updateStatus() {
-  darkStats.textContent = "Dark mode: " + (isDarkmode ? "on" : "off");
-
-  const currentSize = parseFloat(getComputedStyle(list).fontSize);
-  fontStats.textContent = "Font size: " + currentSize + "px";
-
-  highlightStats.textContent = "Highlight: " + (isHighlightOn ? "enabled" : "disabled");
-  deatailStats.textContent = "Deatails: " + (detailsShown ? "shown" : "hidden");
+  elements.darkStats.textContent = `Dark mode: ${state.darkMode ? "on" : "off"}`;
+  elements.fontStats.textContent = `Font size: ${state.fontSize}px`;
+  elements.highlightStats.textContent = `Highlight: ${state.highlight ? "enabled" : "disabled"}`;
+  elements.detailStats.textContent = `Details: ${state.detailsVisible ? "shown" : "hidden"}`;
 }
 
-function toggle(){
+function changeFont(amount) {
+  const newSize = state.fontSize + amount;
 
-  list.hidden = !list.hidden;
-  detailsShown = !detailsShown;
+  // Prevent text from becoming unreadable
+  if (newSize < 10 || newSize > 50) return;
+
+  state.fontSize = newSize;
+  list.style.fontSize = `${state.fontSize}px`;
   updateStatus();
 }
 
-function increase() {
-  const currentSize = parseFloat(getComputedStyle(list).fontSize);
-  list.style.fontSize = (currentSize + 2) + "px";
-    updateStatus();
-
-}
-
-function decrease() {
-  const currentSize = parseFloat(getComputedStyle(list).fontSize);
-  list.style.fontSize = ( currentSize - 2) + "px";
-    updateStatus();
-
-}
-
-function darkMode(){
-  isDarkmode = !isDarkmode;
-  document.body.classList.toggle("dark", isDarkmode);
+function toggleDetails() {
+  state.detailsVisible = !state.detailsVisible;
+  list.hidden = !state.detailsVisible;
   updateStatus();
-
 }
 
-function highlight(){
-  isHighlightOn = !isHighlightOn;
-
-  list.classList.toggle("highlight");
+function toggleDarkMode() {
+  state.darkMode = !state.darkMode;
+  document.body.classList.toggle("dark", state.darkMode);
   updateStatus();
-
 }
 
-function reset(){
-  list.style.fontSize= "16px";
-   list.hidden = false;
-    updateStatus();
-
-
+function toggleHighlight() {
+  state.highlight = !state.highlight;
+  list.classList.toggle("highlight", state.highlight);
+  updateStatus();
 }
+
+function reset() {
+  state.darkMode = false;
+  state.highlight = false;
+  state.detailsVisible = true;
+  state.fontSize = 16;
+
+  document.body.classList.remove("dark");
+  list.classList.remove("highlight");
+  list.hidden = false;
+  list.style.fontSize = "16px";
+
+  updateStatus();
+}
+
+// Initialize status display
+updateStatus();
