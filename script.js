@@ -1,4 +1,5 @@
 const list = document.getElementById("preview");
+let title ="javaScript-title"
 
 const elements = {
   darkStats: document.getElementById("darkStats"),
