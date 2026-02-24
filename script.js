@@ -1,5 +1,5 @@
 const list = document.getElementById("preview");
-let title ="javaScript-title Conflict - B"
+let title ="javaScript-title- conflict A";
 
 const elements = {
   darkStats: document.getElementById("darkStats"),
